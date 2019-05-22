@@ -18,10 +18,10 @@ package cz.cvut.fel.skodaj.b0b36pjv.netinspector.ui.gui;
 import cz.cvut.fel.skodaj.b0b36pjv.netinspector.exceptions.binary.BinaryException;
 import cz.cvut.fel.skodaj.b0b36pjv.netinspector.utils.Utils;
 import cz.cvut.fel.skodaj.b0b36pjv.netinspector.net.*;
-import cz.cvut.fel.skodaj.b0b36pjv.netinspector.utils.CustomTableModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -53,26 +53,93 @@ import javax.swing.table.TableRowSorter;
  */
 public class MainWindow extends JFrame implements ActionListener
 {
+    /**
+     * Panel on upper side
+     */
     private JPanel topPanel;
+    
+    /**
+     * "Start scan" button
+     */
     private JButton startButton;
+    
+    /**
+     * "Close" button
+     */
     private JButton closeButton;
+    
+    /**
+     * "Settings" button
+     * 
+     * (not working anymore)
+     */
     private JButton settingsButton;
     
+    /**
+     * Status bar
+     */
     private JPanel statusPanel;
+    
+    /**
+     * Icon of status
+     */
     private JLabel statusIcon;
+    
+    /**
+     * Text of status
+     */
     private JLabel statusText;
+    
+    /**
+     * Progress bar of status
+     */
     private JProgressBar statusProgress;
+    
+    /**
+     * Title of status
+     */
     private JPanel statusTitle;
     
+    
+    /**
+     * Confirming close dialog
+     */
     private JDialog closeDialog;
     
+    /**
+     * First panel to be showed
+     */
     private JLabel initPanel;
     
+    /**
+     * Scrollable panel containing table with data
+     */
     private JScrollPane dataPanel;
-
     
+    /**
+     * Table containing data
+     */
+    private JTable dataTable;
+    
+    /**
+     * Textbox used to search table
+     */
+    private JTextField searchBox;
+    
+    /**
+     * Panel containing search textbox and icon
+     */
+    private JPanel searchPanel;
+    
+
+    /**
+     * Topology to be viewed
+     */
     private Topology topology;
     
+    /**
+     * Logger of class
+     */
     private static final Logger LOG = Logger.getLogger(MainWindow.class.getName());
     
     /**
@@ -138,10 +205,22 @@ public class MainWindow extends JFrame implements ActionListener
         this.statusProgress.setMaximum(100);
         this.statusProgress.setValue(0);
         this.statusProgress.setVisible(false);
-        this.statusPanel.add(this.statusProgress);
 
         this.initPanel = new JLabel(Utils.getIcon("title.png"));
         this.getContentPane().add(this.initPanel, BorderLayout.CENTER);
+        
+        this.searchPanel = new JPanel(new FlowLayout());
+        
+
+        
+
+        this.searchPanel.add(new JLabel(Utils.getIcon("search_24.png")));
+        this.searchPanel.add(new JLabel("Search "));     
+        
+        
+        this.searchPanel.setBackground(Color.white);
+
+        
         
         
         this.setSize(800, 600);
@@ -160,6 +239,8 @@ public class MainWindow extends JFrame implements ActionListener
                 try {
 
                     this.getContentPane().remove(this.initPanel);
+                    this.statusPanel.remove(this.searchPanel);
+                    this.statusPanel.add(this.statusProgress);
                     if (this.dataPanel != null)
                     {
                         this.getContentPane().remove(this.dataPanel);
@@ -173,10 +254,8 @@ public class MainWindow extends JFrame implements ActionListener
                 Thread scanThread = new Thread(this.topology);
                 scanThread.start();
                 break;
-
-
-
         }
+        
     }
     
     /**
@@ -275,21 +354,38 @@ public class MainWindow extends JFrame implements ActionListener
         this.topology = t;
     }
 
+   
+    
     /**
      * Displays topology to user in table
      */
     public void viewTopology()
-    {
+    {   
+        if (this.dataTable == null)
+        {
+            this.dataTable = new JTable();
+        }
+
+
         String[] columns = new String[4];
         columns[0] = "IP address";
         columns[1] = "MAC address";
         columns[2] = "Vendor";
         columns[3] = "Hostname";
-        JTable data = new JTable(new CustomTableModel(this.prepareData(), columns));
-        this.dataPanel = new JScrollPane(data);
+        CustomTableModel tableModel = new CustomTableModel();
+        tableModel.setDataVector(this.prepareData(), columns);
+        this.dataTable.setModel(tableModel);
+        this.dataTable.setAutoCreateRowSorter(true);
+        this.dataPanel = new JScrollPane(this.dataTable);
         this.getContentPane().remove(this.initPanel);
         this.getContentPane().add(this.dataPanel, BorderLayout.CENTER);
         LOG.finer("Displaying table");
+        this.statusPanel.remove(this.statusProgress);
+        this.statusPanel.add(this.searchPanel);
+        this.searchBox = RowFilterUtil.createRowFilter(this.dataTable);
+        this.searchPanel.add(this.searchBox);
+        this.searchBox.setPreferredSize(new Dimension(128, 26));
+        this.dataPanel.setVisible(true);
         
     }
     
@@ -299,15 +395,14 @@ public class MainWindow extends JFrame implements ActionListener
      */
     private Object[][] prepareData()
     {
-        ArrayList<Device> devices = this.topology.getDevices();
-        Object[][] reti = new Object[devices.size()][];
+        Object[][] reti = new Object[this.topology.getDevices().size()][];
         int idx = 0;
-        for (Device device : devices)
+        for (Device device : this.topology.getDevices())
         {
             reti[idx] = new Object[4];
             reti[idx][0] = device.getIP().toString();
-            reti[idx][1] = device.getMAC().toString();
-            reti[idx][2] = device.getVendor().toString();
+            reti[idx][1] = device.getMAC();
+            reti[idx][2] = device.getVendor();
             reti[idx][3] = device.getHostname();
             idx++;
         }

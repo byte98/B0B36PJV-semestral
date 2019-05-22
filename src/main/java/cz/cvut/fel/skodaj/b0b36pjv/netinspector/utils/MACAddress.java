@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 /**
- *
+ * Class holding all data to MAC addresses
  * @author Jiří Škoda <skodaji4@fel.cvut.cz>
  */
 public class MACAddress
@@ -32,6 +32,16 @@ public class MACAddress
     private int[] data;
     String vendor;
     
+    /**
+     * Constructor of MAC address (format a:b:c:d:e:f)
+     * @param a <b>a</b>:b:c:d:e:f in MAC address
+     * @param b a:<b>b</b>:c:d:e:f in MAC address
+     * @param c a:b:<b>c</b>:d:e:f in MAC address
+     * @param d a:b:c:<b>d</b>:e:f in MAC address
+     * @param e a:b:c:d:<b>e</b>:f in MAC address
+     * @param f a:b:c:d:e:<b>f</b> in MAC address
+     * @param vendor Vendor of network card
+     */
     public MACAddress(int a, int b, int c, int d, int e, int f, String vendor)
     {
         this.data = new int[6];
@@ -44,6 +54,12 @@ public class MACAddress
         this.vendor = vendor;
     }
     
+    /**
+     * Constructor of mac address which gets mac address from a string
+     * @param address String containing MAC address
+     * @param delimiter Delimiter in MAC address
+     * @param vendor Vendor of network card
+     */
     public MACAddress(String address, String delimiter, String vendor)
     {
         String vals[] = address.split(delimiter);
@@ -56,6 +72,10 @@ public class MACAddress
         this.vendor = vendor;
     }
     
+    /**
+     * Gets vendor of network card
+     * @return 
+     */
     public String getVendor()
     {
         return this.vendor;

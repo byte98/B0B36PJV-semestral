@@ -16,25 +16,45 @@
 package cz.cvut.fel.skodaj.b0b36pjv.netinspector.utils;
 
 /**
- *
+ * Stores result of nslookup command
  * @author Jiří Škoda <skodaji4@fel.cvut.cz>
  */
 public class NSLookupResult
 {
+    /**
+     * IP address of host
+     */
     private IPAddress address;
+    
+    /**
+     * Resolved hostname
+     */
     private String hostname;
     
+    /**
+     * Creates result of nslookup
+     * @param address Address which was resolved
+     * @param hostname Resolved hostname
+     */
     public NSLookupResult(IPAddress address, String hostname)
     {
         this.hostname = hostname;
         this.address = address;
     }
     
+    /**
+     * Gets IP address which was resolved
+     * @return Host IP address
+     */
     public IPAddress getIp()
     {
         return this.address;
     }
     
+    /**
+     * Gets resolved hostname
+     * @return Resolved hostname
+     */
     public String getName()
     {
         return this.hostname;

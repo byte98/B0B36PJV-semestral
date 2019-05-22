@@ -219,6 +219,13 @@ public class binary
     }
     
     
+   /**
+     * Provides operation logical OR for two binary numbers
+     * @param a First {@code binary} number
+     * @param b Second {@code binary} number
+     * @return Result of logical AND done on a and b
+     * @throws BinaryException Exception when something gone wrong
+     */
     public static binary b_or (binary a, binary b) throws BinaryException
     {
         binary larger = a;

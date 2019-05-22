@@ -35,12 +35,9 @@ import javax.json.*;
 import javax.swing.ImageIcon;
 
 /**
- * Static class whit some maybe useful utilities
+ * Static class with some maybe useful utilities
  * @author Jiří Škoda <skodaji4@fel.cvut.cz>
  */
-
-
-
 public class Utils
 {
     /**
@@ -49,8 +46,9 @@ public class Utils
     private Utils(){}
     
     /**
-     *
-     * @param array
+     * Function to revert array
+     * @param array Array to be reverted
+     * @return Reverted array
      */
     public static int[] revertArray(int[] array)
     {
@@ -62,6 +60,13 @@ public class Utils
         return reti;
     }
     
+    /**
+     * Loads vendor from JSON file
+     * @param filename Path to file containing database of vendors
+     * @return Map containing vendors and mac addresses
+     * @throws FileNotFoundException Database file wasn't found
+     * @throws IOException File read failed
+     */
     public static Map<String, String> loadVendors(String filename) throws FileNotFoundException, IOException
     {
         InputStream is = new FileInputStream(new File(filename));
@@ -86,12 +91,24 @@ public class Utils
         
     }
     
+    /**
+     * Gets icon from project resources
+     * @param name Name of file in resources
+     * @return Loaded icon
+     * @throws IOException File read failed
+     */
     public static ImageIcon getIcon(String name) throws IOException
     {
         URL imgUrl = Application.class.getClassLoader().getResource(name);
         return new ImageIcon(ImageIO.read(imgUrl));
     }
     
+    /**
+     * Gets vendor from database according to mac address
+     * @param mac Mac address to identify vendor
+     * @param vendors Database of vendors
+     * @return Found vendor or <i>(unknown)</i>
+     */
     public static String findVendor(String mac, Map<String, String> vendors)
     {
         String reti = "(unknown)";

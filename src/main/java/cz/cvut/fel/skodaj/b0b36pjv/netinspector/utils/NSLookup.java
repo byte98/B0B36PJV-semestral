@@ -23,22 +23,41 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 /**
- *
+ * Provides nslookup command
  * @author Jiří Škoda <skodaji4@fel.cvut.cz>
  */
 public class NSLookup implements Callable<NSLookupResult>
 {
+    /**
+     * Hostname (result of NSLookup)
+     */
     private String hostname;
+    
+    /**
+     * IP addres of host, which hostname will be resolved
+     */
     private IPAddress host;
     
+    /**
+     * Class logger
+     */
     private static final Logger LOG = Logger.getLogger(NSLookup.class.getName());
     
+    /**
+     * Prepares NSLookup command
+     * @param address Address to be resolved
+     */
     public NSLookup(IPAddress address)
     {
         this.host = address;
         this.hostname = " ";
     }
     
+    /**
+     * Executes nsLookup command
+     * @return Result of nslookup command
+     * @throws IOException IO failed
+     */
     public NSLookupResult execute() throws IOException
     {
         String os = System.getProperty("os.name");
@@ -50,6 +69,11 @@ public class NSLookup implements Callable<NSLookupResult>
         return new NSLookupResult(this.host, this.hostname);
     }
     
+    /**
+     * Resolves hostname on OS Microsoft Windows
+     * @return String containing hostname
+     * @throws IOException IO failed
+     */
     private String getHostnameWindows() throws IOException
     {
         String reti = " ";

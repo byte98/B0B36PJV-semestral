@@ -21,22 +21,41 @@ import java.net.*;
 import java.util.concurrent.Callable;
 
 /**
- *
+ * Provides ping command
  * @author Jiří Škoda <skodaji4@fel.cvut.cz>
  */
 public class Ping implements Callable<PingResult>
 {
+    /**
+     * IP address to be pinged
+     */
     private IPAddress host;
+    /**
+     * Maximal time for command
+     */
     private int timeout;
+    /**
+     * Logger of class
+     */
     private static final Logger LOG = Logger.getLogger(Ping.class.getName(), Ping.class);
     
-    
+    /**
+     * Setups ping
+     * @param host IP address to ping
+     * @param timeout Timeout in sec.
+     */
     public Ping(IPAddress host, int timeout)
     {
         this.host = host;
         this.timeout = timeout;
     }
 
+    /**
+     * Executes Ping
+     * @return Result of ping
+     * @throws IOException
+     * @throws InterruptedException 
+     */
     public PingResult execute() throws IOException, InterruptedException {
         long reti = -1;
 

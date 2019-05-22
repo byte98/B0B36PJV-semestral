@@ -54,9 +54,19 @@ public class IPAddress implements Iterator<IPAddress>, Comparable<IPAddress>
      */
     private ArrayList<binary> bin_address;
     
+    /**
+     * IP class of IP address
+     */
     private addressClass cls = addressClass.UNKNOWN;
     
-    
+    /**
+     * Constructor of IP address (format: a.b.c.d)
+     * @param a <b>a</b>.b.c.d in IP address
+     * @param b a.<b>b</b>.c.d in IP address
+     * @param c a.b.<b>c</b>.d in IP address
+     * @param d a.b.c.<b>d</b> in IP address
+     * @param prefix Prefix of address
+     */
     public IPAddress(int a, int b, int c, int d, int prefix)
     {
         this.address = new int[4];

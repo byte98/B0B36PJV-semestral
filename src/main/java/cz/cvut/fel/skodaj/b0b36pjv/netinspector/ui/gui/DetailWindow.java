@@ -35,27 +35,49 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- *
+ * Window showing details of device
  * @author Jiří Škoda <skodaji4@fel.cvut.cz>
  */
 public class DetailWindow extends JFrame implements ActionListener
 {
+    /**
+     * Device of which details will be shown
+     */
     private Device device;
     
+    /**
+     * Container storing information about device
+     */
     private JPanel infoPanel;
+    
+    /**
+     * Container storing output of device monitor
+     */
     private JPanel chartPanel;
+    
+    /**
+     * Response monitor monitoring device
+     */
     private ResponseMonitoring rm;
     
+    /**
+     * Creates new window with detail information about device
+     * @param d Device of which details will be shown
+     */
     public DetailWindow(Device d)
     {
         this.device = d;
     }
     
+    /**
+     * Views detail window
+     * @throws IOException Image read failed
+     */
     public void view() throws IOException
     {
         this.setTitle("Detail");
         
-        this.setPreferredSize(new Dimension(300, 500));
+        this.setPreferredSize(new Dimension(500, 400));
         
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         this.infoPanel = new JPanel();
@@ -120,6 +142,9 @@ public class DetailWindow extends JFrame implements ActionListener
         }
     }
     
+    /**
+     * Stops response monitor
+     */
     public void stopMonitor()
     {
         this.rm.stop();

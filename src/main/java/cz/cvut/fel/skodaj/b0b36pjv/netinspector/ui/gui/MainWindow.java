@@ -18,6 +18,8 @@ package cz.cvut.fel.skodaj.b0b36pjv.netinspector.ui.gui;
 import cz.cvut.fel.skodaj.b0b36pjv.netinspector.exceptions.binary.BinaryException;
 import cz.cvut.fel.skodaj.b0b36pjv.netinspector.utils.Utils;
 import cz.cvut.fel.skodaj.b0b36pjv.netinspector.net.*;
+import cz.cvut.fel.skodaj.b0b36pjv.netinspector.utils.IPAddress;
+import cz.cvut.fel.skodaj.b0b36pjv.netinspector.utils.MACAddress;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -32,6 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.io.IOException;
 import java.net.URL;
@@ -51,7 +54,7 @@ import javax.swing.table.TableRowSorter;
  * Main window of application
  * @author Jiří Škoda <skodaji4@fel.cvut.cz>
  */
-public class MainWindow extends JFrame implements ActionListener
+public class MainWindow extends JFrame implements ActionListener, MouseListener
 {
     /**
      * Panel on upper side
@@ -220,7 +223,29 @@ public class MainWindow extends JFrame implements ActionListener
         
         this.searchPanel.setBackground(Color.white);
 
-        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        /*this.dataTable = new JTable();
+        String[] columns = new String[4];
+        columns[0] = "IP address";
+        columns[1] = "MAC address";
+        columns[2] = "Vendor";
+        columns[3] = "Hostname";
+        CustomTableModel tableModel = new CustomTableModel();
+        tableModel.setDataVector(this.prepareData(), columns);
+        this.dataTable.setModel(tableModel);
+        this.dataTable.setAutoCreateRowSorter(true);
+        this.dataPanel = new JScrollPane(this.dataTable);
+        this.getContentPane().remove(this.initPanel);
+        this.getContentPane().add(this.dataPanel, BorderLayout.CENTER);
+        LOG.finer("Displaying table");
+        this.statusPanel.remove(this.statusProgress);
+        this.statusPanel.add(this.searchPanel);
+        this.searchBox = RowFilterUtil.createRowFilter(this.dataTable);
+        this.searchPanel.add(this.searchBox);
+        this.searchBox.setPreferredSize(new Dimension(128, 26));
+        this.dataPanel.setVisible(true);
+        this.dataTable.addMouseListener(this);*/
+        ////////////////////////////////////////////////////////////////////////////////////////
         
         
         this.setSize(800, 600);
@@ -250,10 +275,11 @@ public class MainWindow extends JFrame implements ActionListener
                 } catch (IOException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-                Thread scanThread = new Thread(this.topology);
-                scanThread.start();
+                
+                Thread topoThread = new Thread(this.topology);
+                topoThread.start();
                 break;
+            }
         }
         
     }
@@ -386,6 +412,7 @@ public class MainWindow extends JFrame implements ActionListener
         this.searchPanel.add(this.searchBox);
         this.searchBox.setPreferredSize(new Dimension(128, 26));
         this.dataPanel.setVisible(true);
+        this.dataTable.addMouseListener(this);
         
     }
     
@@ -400,13 +427,62 @@ public class MainWindow extends JFrame implements ActionListener
         for (Device device : this.topology.getDevices())
         {
             reti[idx] = new Object[4];
-            reti[idx][0] = device.getIP().toString();
+            reti[idx][0] = device.getIP();
             reti[idx][1] = device.getMAC();
             reti[idx][2] = device.getVendor();
             reti[idx][3] = device.getHostname();
             idx++;
         }
+        //Object[][] reti = {{"10.4.116.106", "2C:F0:EE:19:2A:10", "VendorA", "   "}, {"10.4.116.107", "2C:F0:EE:19:2A:11", "Vendor1", "Hostname"}};
         
         return reti;
+    }
+
+    
+    /**
+     * Shows detail of device
+     * @param ipAddress IP address of device
+     * @throws IOException Image read failed
+     */
+    private void showDetail(String ipAddress) throws IOException
+    {
+        Device d = this.topology.getDeviceByIp(ipAddress);
+        DetailWindow dw = new DetailWindow(d);
+        dw.view();
+    }
+    
+    
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2)
+        {
+            int row = this.dataTable.rowAtPoint(e.getPoint());
+            String ip = (String) this.dataTable.getValueAt(row, 0);
+            try {
+                this.showDetail(ip);
+            } catch (IOException ex) {
+                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        
     }
 }

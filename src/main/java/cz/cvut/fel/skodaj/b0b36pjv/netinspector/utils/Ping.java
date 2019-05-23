@@ -80,7 +80,6 @@ public class Ping implements Callable<PingResult>
         }
         
         command += this.host.toIPString();
-        
         long start = System.currentTimeMillis();
         Process pingProc = java.lang.Runtime.getRuntime().exec(command);
         

@@ -213,6 +213,7 @@ public class Topology implements Runnable
         }
         return reti;
     }
+   
     
     /**
      * Scans network
@@ -246,6 +247,7 @@ public class Topology implements Runnable
                     reti++;
                     this.UI.setText("Preparing (loading available address " + (maximal + 1) + ")");
                     maximal++;
+                    
                 }
            }
         }
@@ -396,5 +398,24 @@ public class Topology implements Runnable
     public ArrayList<Device> getDevices()
     {
         return this.devices;
+    }
+    
+    /**
+     * Gets device by its IP address
+     * @param ip IP address of device
+     * @return Device if found, {@code null} if not
+     */
+    public Device getDeviceByIp(String ip)
+    {
+        Device reti = null;
+        for(Device d : this.devices)
+        {
+            if (d.getIP().equals(ip))
+            {
+                reti = d;
+                break;
+            }
+        }
+        return reti;
     }
 }

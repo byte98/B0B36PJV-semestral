@@ -77,6 +77,15 @@ public class Device {
         return this.mac.toString();
     }
     
+    /**
+     * Gets IP address of device
+     * @return IP address of device
+     */
+    public IPAddress getIPAddress()
+    {
+        return this.ip;
+    }
+    
     
     /**
      * Gets vendor of network card of device
